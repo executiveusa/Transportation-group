@@ -4,123 +4,134 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 
 const WHATSAPP_LINK =
-  "https://wa.me/523221175350?text=Hi%20Bones%2C%20I%27d%20like%20to%20book%20a%20ride";
+  "https://wa.me/523221175350?text=Hi%20Bones%2C%20I'd%20like%20to%20book%20a%20day%20trip";
 
 export default function HeroSection() {
-  const textRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const subRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let ctx: { revert: () => void } | null = null;
-
     import("gsap").then(({ gsap }) => {
-      import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
-        gsap.registerPlugin(ScrollTrigger);
-
-        ctx = gsap.context(() => {
-          const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-          tl.fromTo(
-            textRef.current,
-            { opacity: 0, x: -40 },
-            { opacity: 1, x: 0, duration: 1 }
-          ).fromTo(
-            imageRef.current,
-            { opacity: 0, x: 40 },
-            { opacity: 1, x: 0, duration: 1 },
-            "-=0.6"
-          );
-        });
+      ctx = gsap.context(() => {
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+        tl.fromTo(headlineRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1 })
+          .fromTo(subRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
+          .fromTo(ctaRef.current, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.7 }, "-=0.4")
+          .fromTo(imageRef.current, { opacity: 0, scale: 1.03 }, { opacity: 1, scale: 1, duration: 1.2 }, "-=1");
       });
     });
-
     return () => ctx?.revert();
   }, []);
 
   return (
-    <section
-      id="hero"
-      className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-[#0f2744] via-[#1e3a5f] to-[#0a1f3d]"
-    >
-      {/* Subtle texture overlay */}
-      <div className="absolute inset-0 bg-black/20" />
+    <section className="min-h-screen bg-mist relative overflow-hidden flex flex-col">
+      {/* Minimal nav */}
+      <nav className="relative z-20 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto w-full">
+        <span className="font-serif font-bold text-xl text-ink tracking-tight">Bones PV</span>
+        <a
+          href={WHATSAPP_LINK}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-primary text-sm py-2.5 px-5"
+        >
+          Book Now
+        </a>
+      </nav>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left — Text */}
-          <div ref={textRef} className="opacity-0">
-            <p className="text-blue-300 text-sm font-medium uppercase tracking-widest mb-4">
-              Puerto Vallarta, Mexico
-            </p>
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Your Private Driver in Puerto Vallarta
+      {/* Hero content */}
+      <div className="flex-1 flex items-center max-w-7xl mx-auto px-8 w-full pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
+
+          {/* Left — Copy */}
+          <div className="max-w-xl">
+            <p className="section-label mb-6">Puerto Vallarta, Mexico</p>
+
+            <h1
+              ref={headlineRef}
+              className="opacity-0 font-serif text-5xl md:text-6xl lg:text-7xl font-bold text-ink leading-tight mb-8"
+            >
+              Tired of the
+              <br />
+              crowded beach?
+              <br />
+              <span className="italic text-gold">I know where to go.</span>
             </h1>
-            <p className="text-blue-200 text-xl font-light mb-4">
-              Airport &bull; Shopping &bull; Events &bull; Night Out
-            </p>
-            <p className="text-gray-300 text-lg leading-relaxed mb-8 max-w-md">
-              Been driving Puerto Vallarta 15+ years. I know every street,
-              every restaurant, every shortcut. Book me for airport,
-              shopping, business, night out. Safe. Reliable. Fair prices.
-            </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 items-start">
+            <div ref={subRef} className="opacity-0 mb-10 space-y-4">
+              <p className="text-gray-600 text-lg leading-relaxed">
+                While everyone else is fighting for a beach chair,
+                my clients are at a hidden cove with nobody around,
+                eating fresh fish and swimming in water you have to see
+                to believe.
+              </p>
+              <p className="text-gray-600 text-lg leading-relaxed">
+                I have been driving Puerto Vallarta for 15 years.
+                I know places that are not on any app.
+                Let me be your guide for the day.
+              </p>
+            </div>
+
+            <div ref={ctaRef} className="opacity-0 flex flex-col sm:flex-row gap-4">
               <a
                 href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 bg-brand-red hover:bg-red-700 text-white font-semibold px-8 py-4 rounded-lg text-lg transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+                className="btn-whatsapp"
               >
-                <PlaneIcon />
-                Book Now
+                <WhatsAppIcon />
+                Book a Day with Bones
+              </a>
+              <a href="#day-trips" className="btn-outline">
+                See the secret spots
               </a>
             </div>
 
-            <p className="text-gray-400 text-sm mt-5">
-              Available 24/7 &nbsp;&bull;&nbsp; English &amp; Spanish
+            <p className="text-muted text-sm mt-6">
+              Airport transfers &bull; Shopping &bull; Night out &bull; Custom day trips
             </p>
           </div>
 
           {/* Right — Photo */}
-          <div ref={imageRef} className="opacity-0 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-sm lg:max-w-md">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-blue-900/40 rounded-2xl" />
+          <div ref={imageRef} className="opacity-0 relative">
+            <div className="relative aspect-[4/5] w-full max-w-md mx-auto">
               <Image
                 src="/bones.jpg"
-                alt="Bones — Private Driver Puerto Vallarta"
-                width={480}
-                height={600}
-                className="rounded-2xl object-cover w-full shadow-2xl"
+                alt="Bones — Private Driver and Local Guide, Puerto Vallarta"
+                fill
+                className="object-cover rounded-3xl"
                 priority
               />
-              {/* Floating badge */}
-              <div className="absolute -bottom-4 -left-4 bg-white rounded-xl px-4 py-3 shadow-xl">
-                <p className="text-gray-900 font-bold text-sm">15+ Years</p>
-                <p className="text-gray-500 text-xs">Driving PV</p>
+              {/* Floating cards */}
+              <div className="absolute -bottom-5 -left-5 bg-white rounded-2xl px-5 py-3.5 shadow-xl border border-black/5">
+                <p className="text-ink font-bold text-sm">15+ Years</p>
+                <p className="text-muted text-xs mt-0.5">Local since birth</p>
               </div>
-              <div className="absolute -top-4 -right-4 bg-brand-red rounded-xl px-4 py-3 shadow-xl">
-                <p className="text-white font-bold text-sm">4.9 Rating</p>
-                <p className="text-red-200 text-xs">500+ Rides</p>
+              <div className="absolute -top-5 -right-5 bg-navy rounded-2xl px-5 py-3.5 shadow-xl">
+                <p className="text-white font-bold text-sm">4.9 / 5</p>
+                <p className="text-blue-300 text-xs mt-0.5">500+ rides</p>
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 animate-bounce">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 5v14M5 12l7 7 7-7" />
-        </svg>
+      {/* Bottom scroll hint */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted/50">
+        <span className="text-xs tracking-widest uppercase">Scroll</span>
+        <div className="w-px h-8 bg-current animate-pulse" />
       </div>
     </section>
   );
 }
 
-function PlaneIcon() {
+function WhatsAppIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 4c-2 0-4 1-5.5 2.5L10 10 1.8 8.2c-.3-.1-.5.1-.3.4l1.5 2.5c.2.3.5.5.8.5L8 12l-2 2-2-1c-.3-.2-.6.1-.4.4l1 2c.1.2.3.4.5.4l2 .5 3 3c.2.2.6.2.8-.1l.5-1.5 2.5-.5c.2 0 .4-.2.5-.5l.2-1c.1-.3-.1-.5-.4-.5l-.8.2L12 16l4.2-1.2c.3-.1.5-.3.5-.6l.1-.5z" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
     </svg>
   );
 }
