@@ -9,15 +9,24 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "sans-serif"],
-        serif: ["Playfair Display", "serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
+        serif: ['"Playfair Display"', "Georgia", "serif"],
       },
       colors: {
-        brand: {
-          red: "#dc2626",
-          blue: "#1e3a5f",
-          whatsapp: "#25D366",
-        },
+        ink: "#0a0a0a",
+        navy: "#0a1628",
+        gold: "#c9a96e",
+        sand: "#f5f0e8",
+        mist: "#fafaf9",
+        muted: "#6b7280",
+        whatsapp: "#25D366",
+      },
+      letterSpacing: {
+        widest: "0.2em",
+      },
+      lineHeight: {
+        tight: "1.1",
+        snug: "1.3",
       },
     },
   },

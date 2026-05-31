@@ -5,6 +5,7 @@ export type ServiceType =
   | "night_out"
   | "hotel"
   | "events"
+  | "day_trip"
   | "custom";
 
 export type BookingStatus = "pending" | "confirmed" | "completed" | "canceled";
@@ -60,4 +61,41 @@ export interface AgentBookingResult {
   phone?: string;
   notes?: string;
   confirmation_message?: string;
+}
+
+export interface BlogPost {
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  coverImage?: string;
+  tags: string[];
+  publishedAt: string;
+  readingMinutes: number;
+}
+
+export interface AnalyticsEvent {
+  eventType: "page_view" | "whatsapp_click" | "blog_view" | "booking_start";
+  page?: string;
+  referrer?: string;
+  sessionId?: string;
+  metadata?: Record<string, string | number | boolean>;
+}
+
+export interface DailySummary {
+  date: string;
+  pageViews: number;
+  whatsappClicks: number;
+  newBookings: number;
+  revenueUsd: number;
+}
+
+export interface DriverConfig {
+  slug: string;
+  name: string;
+  phone: string;
+  whatsapp: string;
+  area: string;
+  tagline: string;
+  notifyPhone: string;
 }

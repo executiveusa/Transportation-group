@@ -4,103 +4,66 @@ import { useEffect, useRef } from "react";
 
 const testimonials = [
   {
-    quote:
-      "Best driver in PV. Knows the area perfectly, super safe, and fun to talk to. Will not use anyone else when I visit.",
+    quote: "I asked Bones to take me somewhere away from the tourist beaches. He brought me to a cove I cannot find on any map. One of the best days of my life.",
     author: "Sarah M.",
-    role: "Tourist",
+    role: "Visited January 2026",
   },
   {
-    quote:
-      "Reliable, professional, fair prices. I use Bones for all my airport runs. Never been late once in three years.",
+    quote: "Used him for airport runs three trips in a row. He has never been late once. Simple as that.",
     author: "Marco L.",
-    role: "Business Owner",
+    role: "Business traveler",
   },
   {
-    quote:
-      "Real local guy. Not some corporate thing. You feel like you are getting a ride from a friend who actually knows the city.",
+    quote: "He knows everyone. Needed a doctor at 10pm and he had his friend there in 45 minutes. That is not a service — that is a person who actually cares.",
     author: "Jennifer K.",
-    role: "Regular Client",
+    role: "Expat, PV resident",
+  },
+  {
+    quote: "Yelapa day trip was incredible. He knew exactly where to sit, what to order, when to leave before the afternoon boat crowd arrived. Effortless.",
+    author: "David R.",
+    role: "Visited March 2026",
   },
 ];
-
-function StarRating() {
-  return (
-    <div className="flex gap-1 mb-4">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <svg
-          key={i}
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="#dc2626"
-          stroke="none"
-        >
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-        </svg>
-      ))}
-    </div>
-  );
-}
 
 export default function TestimonialsSection() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     let ctx: { revert: () => void } | null = null;
-
     import("gsap").then(({ gsap }) => {
       import("gsap/ScrollTrigger").then(({ ScrollTrigger }) => {
         gsap.registerPlugin(ScrollTrigger);
-
         ctx = gsap.context(() => {
-          gsap.fromTo(
-            ".testimonial-card",
-            { opacity: 0, scale: 0.95, y: 20 },
-            {
-              opacity: 1,
-              scale: 1,
-              y: 0,
-              duration: 0.7,
-              stagger: 0.15,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: sectionRef.current,
-                start: "top 80%",
-                once: true,
-              },
-            }
-          );
+          gsap.fromTo(".review-card", { opacity: 0, y: 30 }, {
+            opacity: 1, y: 0, duration: 0.7, stagger: 0.12, ease: "power3.out",
+            scrollTrigger: { trigger: sectionRef.current, start: "top 80%", once: true },
+          });
         });
       });
     });
-
     return () => ctx?.revert();
   }, []);
 
   return (
-    <section id="testimonials" ref={sectionRef} className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            What People Say
+    <section ref={sectionRef} className="py-28 bg-mist">
+      <div className="max-w-7xl mx-auto px-8">
+        <div className="mb-16">
+          <p className="section-label mb-4">Reviews</p>
+          <h2 className="display-heading text-4xl md:text-5xl">
+            What people say.
           </h2>
-          <p className="text-gray-500 text-lg">
-            Real reviews from real riders.
-          </p>
         </div>
 
-        {/* Desktop: 3 column grid */}
-        <div className="hidden md:grid md:grid-cols-3 gap-8">
-          {testimonials.map((t) => (
-            <TestimonialCard key={t.author} testimonial={t} />
-          ))}
+        {/* Desktop */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {testimonials.map((t) => <ReviewCard key={t.author} t={t} />)}
         </div>
 
-        {/* Mobile: horizontal scroll with snap */}
-        <div className="md:hidden flex gap-6 overflow-x-auto snap-x pb-4 -mx-6 px-6">
+        {/* Mobile scroll */}
+        <div className="md:hidden flex gap-4 overflow-x-auto snap-x pb-4 -mx-8 px-8">
           {testimonials.map((t) => (
-            <div key={t.author} className="snap-start flex-shrink-0 w-80">
-              <TestimonialCard testimonial={t} />
+            <div key={t.author} className="snap-start flex-shrink-0 w-[300px]">
+              <ReviewCard t={t} />
             </div>
           ))}
         </div>
@@ -109,21 +72,31 @@ export default function TestimonialsSection() {
   );
 }
 
-function TestimonialCard({
-  testimonial,
-}: {
-  testimonial: (typeof testimonials)[number];
-}) {
+function ReviewCard({ t }: { t: (typeof testimonials)[number] }) {
   return (
-    <div className="testimonial-card opacity-0 bg-gray-50 rounded-2xl p-8 border border-gray-100 hover:shadow-md transition-shadow duration-200">
-      <StarRating />
-      <blockquote className="text-gray-700 text-lg leading-relaxed mb-6 italic">
-        &ldquo;{testimonial.quote}&rdquo;
-      </blockquote>
+    <div className="review-card opacity-0 card p-7 flex flex-col justify-between gap-6 h-full">
       <div>
-        <p className="font-semibold text-gray-900">{testimonial.author}</p>
-        <p className="text-gray-500 text-sm">{testimonial.role}</p>
+        <Stars />
+        <blockquote className="text-gray-700 leading-relaxed mt-4 italic">
+          &ldquo;{t.quote}&rdquo;
+        </blockquote>
       </div>
+      <div>
+        <p className="font-semibold text-ink text-sm">{t.author}</p>
+        <p className="text-muted text-xs mt-0.5">{t.role}</p>
+      </div>
+    </div>
+  );
+}
+
+function Stars() {
+  return (
+    <div className="flex gap-0.5">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="#c9a96e">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      ))}
     </div>
   );
 }

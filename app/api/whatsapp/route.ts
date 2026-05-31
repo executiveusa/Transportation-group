@@ -2,15 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { processBookingMessage, mapServiceLabel } from "@/lib/agent";
 import { saveBooking } from "@/lib/db";
 import { sendWhatsApp, validateTwilioSignature } from "@/lib/twilio";
+import { notifyBookingReceived, silentNotify } from "@/lib/notify";
+import { trackEvent } from "@/lib/analytics";
 import type { Booking } from "@/lib/types";
 
 export async function POST(request: NextRequest) {
   try {
-    // Twilio sends form-encoded data
     const body = await request.text();
     const params = Object.fromEntries(new URLSearchParams(body));
 
-    // Validate Twilio signature to reject spoofed requests
+    // Validate Twilio signature
     const appUrl = process.env.NEXT_PUBLIC_APP_URL;
     if (appUrl) {
       const signature = request.headers.get("x-twilio-signature") ?? "";
@@ -24,16 +25,15 @@ export async function POST(request: NextRequest) {
     const message = params.Body ?? params.message ?? "";
 
     if (!phone || !message) {
-      return NextResponse.json(
-        { error: "Missing phone or message" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing phone or message" }, { status: 400 });
     }
 
-    // Process booking via AI agent
+    // Track inbound contact
+    trackEvent({ eventType: "booking_start", page: "whatsapp", metadata: { phone } });
+
+    // Process via AI agent
     const result = await processBookingMessage(phone, message);
 
-    // Persist booking
     const booking: Omit<Booking, "id" | "created_at" | "updated_at"> = {
       phone_number: phone,
       name: result.name ?? undefined,
@@ -50,10 +50,14 @@ export async function POST(request: NextRequest) {
 
     const saved = await saveBooking(booking);
 
-    // Send confirmation back via WhatsApp
+    // Send confirmation to client
     if (result.confirmation_message) {
       await sendWhatsApp(phone, result.confirmation_message);
     }
+
+    // Notify Bones — fire-and-forget, never block the response
+    silentNotify("").catch(() => {});
+    notifyBookingReceived(saved).catch(() => {});
 
     return NextResponse.json({ status: "booked", booking: saved });
   } catch (err) {
