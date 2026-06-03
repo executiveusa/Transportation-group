@@ -1,8 +1,90 @@
 {
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install --legacy-peer-deps",
   "crons": [
     {
       "path": "/api/daily-summary",
       "schedule": "0 14 * * *"
     }
-  ]
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/_next/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.(jpg|jpeg|png|gif|ico|svg|webp|avif)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/whatsapp",
+      "destination": "https://wa.me/523221175350",
+      "permanent": false
+    },
+    {
+      "source": "/contact",
+      "destination": "https://wa.me/523221175350?text=Hi%20Bones%2C%20I%27d%20like%20to%20get%20in%20touch",
+      "permanent": false
+    },
+    {
+      "source": "/book",
+      "destination": "https://wa.me/523221175350?text=Hi%20Bones%2C%20I%27d%20like%20to%20book%20a%20trip",
+      "permanent": false
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_APP_URL": "https://bones-driver.vercel.app",
+    "NEXT_PUBLIC_WHATSAPP_NUMBER": "523221175350"
+  }
 }
